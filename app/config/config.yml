@@ -67,3 +67,7 @@ swiftmailer:
     username:  "%mailer_user%"
     password:  "%mailer_password%"
     spool:     { type: memory }
+
+bruno_sculpin:
+    # in case you're wondering, my_custom_parser is setup on services.yml
+    parser_id: my_custom_parser

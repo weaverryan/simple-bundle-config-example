@@ -1,6 +1,10 @@
 imports:
     - { resource: config.yml }
 
+bruno_sculpin:
+    # this will override the one from config.yml
+    parser_id: another_bruno_parser_service
+
 framework:
     router:
         resource: "%kernel.root_dir%/config/routing_dev.yml"

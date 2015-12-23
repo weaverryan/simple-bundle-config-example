@@ -1,3 +1,8 @@
 services:
+    # used in config.yml
     bruno_parser_service:
+        class: stdClass
+
+    # used in config_dev.yml
+    another_bruno_parser_service:
         class: stdClass
