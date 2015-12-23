@@ -1,5 +1,6 @@
 <?php
 
+use Bruno\SculpinBundle\BrunoSculpinBundle;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
@@ -16,6 +17,7 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new AppBundle\AppBundle(),
+            new BrunoSculpinBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'), true)) {
