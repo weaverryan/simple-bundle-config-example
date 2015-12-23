@@ -2,6 +2,8 @@
 
 namespace Bruno\SculpinBundle\DependencyInjection;
 
+use Symfony\Component\Config\Definition\Builder\TreeBuilder;
+use Symfony\Component\Config\Definition\Processor;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -32,15 +34,14 @@ class BrunoSculpinExtension extends Extension
      */
     private function mergeConfiguration(array $configs)
     {
-        // add default values to the beginning of the array
-        array_unshift($configs, [
-            'parser_id' => 'bruno_parser_service'
-        ]);
+        $treeBuilder = new TreeBuilder();
+        $treeBuilder->root('bruno_sculpin')
+            ->children()
+                ->scalarNode('parser_id')->defaultValue('bruno_parser_service')
+            ->end()
+        ;
 
-        // merges the array of configuration into one flat array
-        $merged = call_user_func_array('array_merge', $configs);
-
-        return $merged;
+        $processor = new Processor();
+        return $processor->process($treeBuilder->buildTree(), $configs);
     }
-
 }
