@@ -1,0 +1,92 @@
+diff --git a/app/config/config.yml b/app/config/config.yml
+index 4c44687..4deabf6 100644
+--- a/app/config/config.yml
++++ b/app/config/config.yml
+@@ -67,3 +67,7 @@ swiftmailer:
+     username:  "%mailer_user%"
+     password:  "%mailer_password%"
+     spool:     { type: memory }
++
++bruno_sculpin:
++    # in case you're wondering, my_custom_parser is setup on services.yml
++    parser_id: my_custom_parser
+diff --git a/app/config/config_dev.yml b/app/config/config_dev.yml
+index 2988f4f..25339ae 100644
+--- a/app/config/config_dev.yml
++++ b/app/config/config_dev.yml
+@@ -1,6 +1,10 @@
+ imports:
+     - { resource: config.yml }
+ 
++bruno_sculpin:
++    # this will override the one from config.yml
++    parser_id: another_bruno_parser_service
++
+ framework:
+     router:
+         resource: "%kernel.root_dir%/config/routing_dev.yml"
+diff --git a/app/config/services.yml b/app/config/services.yml
+index 5c76fc5..9a4a69f 100644
+--- a/app/config/services.yml
++++ b/app/config/services.yml
+@@ -7,3 +7,5 @@ services:
+ #    service_name:
+ #        class: AppBundle\Directory\ClassName
+ #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]
++    my_custom_parser:
++        class: stdClass
+diff --git a/src/Bruno/SculpinBundle/DependencyInjection/BrunoSculpinExtension.php b/src/Bruno/SculpinBundle/DependencyInjection/BrunoSculpinExtension.php
+index 2b0d210..30b9d9b 100644
+--- a/src/Bruno/SculpinBundle/DependencyInjection/BrunoSculpinExtension.php
++++ b/src/Bruno/SculpinBundle/DependencyInjection/BrunoSculpinExtension.php
+@@ -11,10 +11,36 @@ class BrunoSculpinExtension extends Extension
+ {
+     public function load(array $config, ContainerBuilder $container)
+     {
++        $config = $this->mergeConfiguration($config);
++
+         $loader = new YamlFileLoader($container, new FileLocator());
+         $loader->load(__DIR__.'/../Resources/config/services.yml');
+ 
+         // this is the goal: dynamically set this "main_parser" service alias
+-        $container->setAlias('main_parser', 'bruno_parser_service');
++        $container->setAlias('main_parser', $config['parser_id']);
+     }
++
++    /**
++     * Takes the array of config arrays, adds some default values,
++     * and then merges them into one flat config array so that later values
++     * override earlier values.
++     *
++     * This is normally done via the Configuration class
++     *
++     * @param array $configs
++     * @return mixed
++     */
++    private function mergeConfiguration(array $configs)
++    {
++        // add default values to the beginning of the array
++        array_unshift($configs, [
++            'parser_id' => 'bruno_parser_service'
++        ]);
++
++        // merges the array of configuration into one flat array
++        $merged = call_user_func_array('array_merge', $configs);
++
++        return $merged;
++    }
++
+ }
+diff --git a/src/Bruno/SculpinBundle/Resources/config/services.yml b/src/Bruno/SculpinBundle/Resources/config/services.yml
+index 8e92ef0..dd8446d 100644
+--- a/src/Bruno/SculpinBundle/Resources/config/services.yml
++++ b/src/Bruno/SculpinBundle/Resources/config/services.yml
+@@ -1,3 +1,8 @@
+ services:
++    # used in config.yml
+     bruno_parser_service:
+         class: stdClass
++
++    # used in config_dev.yml
++    another_bruno_parser_service:
++        class: stdClass

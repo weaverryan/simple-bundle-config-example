@@ -1,0 +1,20 @@
+{
+    "steps": [
+        {
+            "id": "start",
+            "name": "start",
+            "description": null
+        },
+        {
+            "id": "add-dynamic-configuration-simple",
+            "name": "Add dynamic configuration (simple)",
+            "description": null
+        },
+        {
+            "id": "use-treebuilder-w-o-configuration-class",
+            "name": "Use TreeBuilder w\/o Configuration class",
+            "description": null
+        }
+    ],
+    "sha": "a95f8d43ac98b21ba6ea953a1956c4bcd4925806"
+}
